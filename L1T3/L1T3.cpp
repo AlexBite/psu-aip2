@@ -1,19 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
 struct Student
 {
-    string name;
-    string group;
-    string specialty;
-    double scholarship;
+    char name[40];
+    char group[40];
+    char specialty[40];
+    int scholarship;
 };
 
-void writeStudentsToBinaryFile(const vector<Student>& students, const string& fileName)
+void writeStudentsToFile(const string& fileName, const Student* students, int numStudents)
 {
     ofstream outputFile(fileName, ios::binary);
     if (!outputFile)
@@ -22,27 +21,27 @@ void writeStudentsToBinaryFile(const vector<Student>& students, const string& fi
         return;
     }
 
-    for (const Student& student : students)
+    for (int i = 0; i < numStudents; ++i)
     {
-        outputFile.write(reinterpret_cast<const char*>(&student), sizeof(Student));
+        outputFile.write(reinterpret_cast<const char*>(&students[i]), sizeof(Student));
     }
 
     outputFile.close();
 }
 
-void displayPhysicsStudents(const string& fileName)
+void displayStudentsBySpecialty(const string& fileName, const string& specialty)
 {
-    ifstream inputFile(fileName, ios::binary);
+    fstream inputFile(fileName, ios::binary | ios::in | ios::out);
     if (!inputFile)
     {
         cerr << "Failed to open the binary file: " << fileName << endl;
         return;
     }
 
-    Student student;
+    Student student{};
     while (inputFile.read(reinterpret_cast<char*>(&student), sizeof(Student)))
     {
-        if (student.specialty == "physics")
+        if (student.specialty == specialty)
         {
             cout << "Name: " << student.name << endl;
             cout << "Group: " << student.group << endl;
@@ -55,129 +54,74 @@ void displayPhysicsStudents(const string& fileName)
     inputFile.close();
 }
 
-void updateScholarship(const string& fileName, int studentIndex, double newScholarship)
+void replaceStudentScholarship(const string& fileName, int index, int newScholarship)
 {
-    fstream file(fileName, ios::binary | ios::in | ios::out);
+    fstream file(fileName, ios::in | ios::out | ios::binary);
     if (!file)
     {
         cerr << "Failed to open the binary file: " << fileName << endl;
         return;
     }
 
+    file.seekg(index * sizeof(Student), ios::beg);
     Student student;
-    file.seekp(studentIndex * sizeof(Student), ios::beg);
     if (file.read(reinterpret_cast<char*>(&student), sizeof(Student)))
     {
         student.scholarship = newScholarship;
-        file.seekp(studentIndex * sizeof(Student), ios::beg);
+        file.seekp(index * sizeof(Student), ios::beg);
         file.write(reinterpret_cast<const char*>(&student), sizeof(Student));
     }
 
     file.close();
 }
 
-void outputBinaryFileContents(const string& binaryFileName, const string& textFileName = "")
+void displayBinaryFileContents(const string& fileName)
 {
-    ofstream outputFile;
-    if (!textFileName.empty())
+    ifstream inputFile(fileName, ios::binary);
+    if (!inputFile)
     {
-        outputFile.open(textFileName);
-        if (!outputFile)
-        {
-            cerr << "Failed to open the text file: " << textFileName << endl;
-            return;
-        }
-    }
-
-    ifstream binaryFile(binaryFileName, ios::binary);
-    if (!binaryFile)
-    {
-        cerr << "Failed to open the binary file: " << binaryFileName << endl;
+        cerr << "Failed to open the binary file: " << fileName << endl;
         return;
     }
 
     Student student;
-    while (binaryFile.read(reinterpret_cast<char*>(&student), sizeof(Student)))
+    while (inputFile.read(reinterpret_cast<char*>(&student), sizeof(Student)))
     {
-        if (textFileName.empty())
-        {
-            cout << "Name: " << student.name << endl;
-            cout << "Group: " << student.group << endl;
-            cout << "Specialty: " << student.specialty << endl;
-            cout << "Scholarship: " << student.scholarship << endl;
-            cout << endl;
-        }
-        else
-        {
-            outputFile << "Name: " << student.name << endl;
-            outputFile << "Group: " << student.group << endl;
-            outputFile << "Specialty: " << student.specialty << endl;
-            outputFile << "Scholarship: " << student.scholarship << endl;
-            outputFile << endl;
-        }
+        cout << "Name: " << student.name << endl;
+        cout << "Group: " << student.group << endl;
+        cout << "Specialty: " << student.specialty << endl;
+        cout << "Scholarship: " << student.scholarship << endl;
+        cout << endl;
     }
 
-    binaryFile.close();
-    if (!textFileName.empty())
-    {
-        outputFile.close();
-    }
+    inputFile.close();
 }
 
 int main()
 {
-    const string binaryFileName = "students.bin";
-    // Create a list of students
-    vector<Student> students;
-    int numStudents;
+    system("chcp 65001");
+    const int numStudents = 3;
+    Student students[numStudents] = {
+        {"Джон Смит", "Группа А", "физика", 1500},
+        {"Эмили Джонсон", "Группа Б", "химия", 1700},
+        {"Элис Джонсон", "Группа С", "физика", 1600}
+    };
 
-    cout << "Enter the number of students: ";
-    cin >> numStudents;
+    // Write the students to a binary file
+    writeStudentsToFile("students.bin", students, numStudents);
 
-    cin.ignore(); // Ignore the newline character after entering the number
+    // Display the list of students of the specialty "physics" from the binary file
+    cout << "Список физиков: " << endl;
+    displayStudentsBySpecialty("students.bin", "физика");
 
-    for (int i = 0; i < numStudents; i++)
-    {
-        Student student;
-        cout << "Enter the details for student " << i + 1 << ":" << endl;
-        cout << "Name: ";
-        getline(cin, student.name);
-        cout << "Group: ";
-        getline(cin, student.group);
-        cout << "Specialty: ";
-        getline(cin, student.specialty);
-        cout << "Scholarship: ";
-        cin >> student.scholarship;
+    // Replace the scholarship for a specific student in the binary file
+    int studentIndex = 1; // Index of the student to modify
+    int newScholarship = 2000; // New scholarship value
+    replaceStudentScholarship("students.bin", studentIndex, newScholarship);
 
-        cin.ignore(); // Ignore the newline character after entering the scholarship
-
-        students.push_back(student);
-    }
-
-    // Write students to binary file
-    writeStudentsToBinaryFile(students, binaryFileName);
-
-    // Display physics students
-    cout << "Physics Students:" << endl;
-    displayPhysicsStudents(binaryFileName);
-
-    // Update scholarship for a student
-    int studentIndex;
-    double newScholarship;
-
-    cout << "Enter the index of the student to update (0 to " << numStudents - 1 << "): ";
-    cin >> studentIndex;
-    cout << "Enter the new scholarship value: ";
-    cin >> newScholarship;
-
-    updateScholarship(binaryFileName, studentIndex, newScholarship);
-
-    // Output binary file contents to text file and screen
-    cout << "Binary File Contents:" << endl;
-    outputBinaryFileContents(binaryFileName);
-
-    cout << "Text File Contents:" << endl;
-    outputBinaryFileContents(binaryFileName, "students.txt");
+    // Display the modified list of students from the binary file
+    cout << "Файл после изменения: " << endl;
+    displayBinaryFileContents("students.bin");
 
     return 0;
 }

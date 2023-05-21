@@ -43,6 +43,8 @@ void writeBinaryFileToTextFile(const string& binaryFileName, const string& textF
 
 int main()
 {
+    system("chcp 65001");
+    
     const string textFileName = "numbers.txt";
     const string binaryFileName = "numbers.bin";
     const string primeFileName = "prime.bin";
@@ -55,11 +57,11 @@ int main()
         return 1;
     }
 
-    cout << "Enter the number of integers to write (between 20 and 30): ";
+    cout << "Введите количество целочисенных значений: ";
     int numIntegers;
     cin >> numIntegers;
 
-    cout << "Enter " << numIntegers << " integers: " << endl;
+    cout << "Введите " << numIntegers << " целочисленных значений: " << endl;
     for (int i = 0; i < numIntegers; i++) {
         int num;
         cin >> num;
@@ -91,7 +93,7 @@ int main()
     binaryFile.close();
 
     // Read and update the binary file
-    cout << "Enter the record number to update (0 to " << numIntegers - 1 << "): ";
+    cout << "Введите номер записи для редактирования (0 - " << numIntegers - 1 << "): ";
     int recordNumber;
     cin >> recordNumber;
 
@@ -102,9 +104,10 @@ int main()
     }
 
     binaryFileToUpdate.seekp(recordNumber * sizeof(int));
-    cout<< "Enter the new value: ";
+    cout<< "Введите новое значение: ";
     int newValue;
-    cin >> newValue;binaryFileToUpdate.write(reinterpret_cast<const char*>(&newValue), sizeof(int));
+    cin >> newValue;
+    binaryFileToUpdate.write(reinterpret_cast<const char*>(&newValue), sizeof(int));
     binaryFileToUpdate.close();
 
     // Create two new binary files for prime and composite numbers
@@ -160,11 +163,11 @@ int main()
     writeBinaryFileToTextFile(compositeFileName, "composite_numbers.txt");
 
     // Output binary file contents to screen
-    cout << "Prime Numbers:" << endl;
+    cout << "Простые числа:" << endl;
     outputBinaryFileContents(primeFileName, cout);
     cout << endl;
 
-    cout << "Composite Numbers:" << endl;
+    cout << "Составные:" << endl;
     outputBinaryFileContents(compositeFileName, cout);
     cout << endl;
 

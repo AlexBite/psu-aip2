@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+
 struct Node
 {
     int data;
@@ -15,24 +17,6 @@ private:
 public:
     LinkedList() : head(nullptr)
     {
-    }
-
-    void insertFromFile(const std::string& filename)
-    {
-        std::ifstream inputFile(filename);
-        if (!inputFile.is_open())
-        {
-            std::cout << "Failed to open file." << std::endl;
-            return;
-        }
-
-        int value;
-        while (inputFile >> value)
-        {
-            insert(value);
-        }
-
-        inputFile.close();
     }
 
     void insert(int value)
@@ -55,40 +39,61 @@ public:
             current->next = newNode;
         }
 
-        std::cout << "Element " << value << " added to the list." << std::endl;
+        cout << "Элемент со значением " << value << " добавлен в список." << endl;
+    }
+
+    void insertFromFile(const string& filename, int numsCount)
+    {
+        ifstream inputFile(filename);
+        if (!inputFile.is_open())
+        {
+            cout << "Не удалось открыть файл." << endl;
+            return;
+        }
+
+        int value;
+        for (int i = 0; i < numsCount; i++)
+        {
+            inputFile >> value;
+            insert(value);
+        }
+
+        inputFile.close();
+    }
+
+    void displayElement(int value)
+    {
+        Node* current = head;
+        int index = 0;
+        while (current != nullptr)
+        {
+            if (current->data == value)
+            {
+                cout << "Элемент со значнием " << value << " найден по индексу: " << index + 1 << endl;
+                return;
+            }
+            current = current->next;
+            index++;
+        }
+        cout << "Элемент со значнием " << value << " не найден." << endl;
     }
 
     void display()
     {
         if (head == nullptr)
         {
-            std::cout << "The list is empty." << std::endl;
+            cout << "Список пуст." << endl;
             return;
         }
 
         Node* current = head;
-        std::cout << "Elements in the list: ";
+        cout << "Содержимое списка: ";
         while (current != nullptr)
         {
-            std::cout << current->data << " ";
+            cout << current->data << " ";
             current = current->next;
         }
-        std::cout << std::endl;
-    }
-
-    void displayElement(int value)
-    {
-        Node* current = head;
-        while (current != nullptr)
-        {
-            if (current->data == value)
-            {
-                std::cout << "Element " << value << " found at address: " << current << std::endl;
-                return;
-            }
-            current = current->next;
-        }
-        std::cout << "Element " << value << " not found in the list." << std::endl;
+        cout << endl;
     }
 
     ~LinkedList()
@@ -105,38 +110,39 @@ public:
 
 int main()
 {
+    system("chcp 65001");
     LinkedList linkedList;
     int choice;
 
     while (true)
     {
-        std::cout << "Select a menu item:" << std::endl;
-        std::cout << "1. Forming a list (reading from a file)" << std::endl;
-        std::cout << "2. Adding a list item from the keyboard" << std::endl;
-        std::cout << "3. Displaying all elements of the list" << std::endl;
-        std::cout << "4. Display the element with the given value" << std::endl;
-        std::cout << "5. Exit" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        cout << "Выберите пункт меню" << endl;
+        cout << "1. Загрузить числа из файла" << endl;
+        cout << "2. Добавить число вручную" << endl;
+        cout << "3. Отобразить все элементы списка" << endl;
+        cout << "4. Отобразить элемент с заданным значнием" << endl;
+        cout << "5. Выход" << endl;
+        cout << "Выбрать: ";
+        cin >> choice;
 
         if (choice == 1)
         {
-            std::string filename;
-            int numNumbers;
+            string filename;
+            cout << "Введите название файла: ";
+            cin >> filename;
 
-            std::cout << "Enter the name of the file: ";
-            std::cin >> filename;
-            std::cout << "Enter the number of numbers: ";
-            std::cin >> numNumbers;
+            int numsCount;
+            cout << "Введите количество чисел: ";
+            cin >> numsCount;
 
-            linkedList.insertFromFile(filename);
+            linkedList.insertFromFile(filename, numsCount);
         }
         else if (choice == 2)
         {
             int value;
 
-            std::cout << "Enter the value to be added: ";
-            std::cin >> value;
+            cout << "Введите значние: ";
+            cin >> value;
 
             linkedList.insert(value);
         }
@@ -147,8 +153,8 @@ int main()
         else if (choice == 4)
         {
             int value;
-            std::cout << "Enter the value to search for: ";
-            std::cin >> value;
+            cout << "Введите искомое значние: ";
+            cin >> value;
 
             linkedList.displayElement(value);
         }
@@ -158,7 +164,7 @@ int main()
         }
         else
         {
-            std::cout << "Invalid choice. Please try again." << std::endl;
+            cout << "Введите число соответствующее одному из пунктов меню." << endl;
         }
     }
 

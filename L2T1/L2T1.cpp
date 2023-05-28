@@ -1,55 +1,52 @@
 #include <iostream>
 #include <vector>
 
-void findNumberCombinations(const std::vector<int>& numbers, int target, std::vector<int>& currentCombination, int currentIndex) {
-    // Base case: If target becomes 0, we have found a valid combination
+using namespace std;
+
+void findNumberCombinations(const vector<int>& numbers, int target, vector<int>& currentCombination, int currentIndex) {
+    // Если target равно 0, то комбинация найдена
     if (target == 0) {
-        // Print the current combination
         for (int num : currentCombination) {
-            std::cout << num << " ";
+            cout << num << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
         return;
     }
 
-    // Base case: If currentIndex reaches the end of the numbers vector or target becomes negative,
-    // we cannot form a valid combination
+    // Если прошли все числа, то значит комбинации не получилось
     if (currentIndex >= numbers.size() || target < 0) {
         return;
     }
-
-    // Recursive case:
-    // 1. Include the current number in the combination
+    
+    // Включить текущее число в комбинацию
     currentCombination.push_back(numbers[currentIndex]);
     findNumberCombinations(numbers, target - numbers[currentIndex], currentCombination, currentIndex + 1);
 
-    // 2. Exclude the current number from the combination
+    // Исключить текущее число из комбинации
     currentCombination.pop_back();
     findNumberCombinations(numbers, target, currentCombination, currentIndex + 1);
 }
 
-void findAllCombinations(const std::vector<int>& numbers, int target) {
-    std::vector<int> currentCombination;
-    findNumberCombinations(numbers, target, currentCombination, 0);
-}
-
 int main() {
+    system("chcp 65001");
     int target;
-    std::cout << "Enter the target number: ";
-    std::cin >> target;
+    cout << "Введите искомое число: ";
+    cin >> target;
 
     int numCount;
-    std::cout << "Enter the number of natural numbers: ";
-    std::cin >> numCount;
+    cout << "Задайте количество натуральных чисел: ";
+    cin >> numCount;
 
-    std::vector<int> numbers(numCount);
-    std::cout << "Enter the natural numbers: ";
+    vector<int> numbers(numCount);
+    cout << "Введите натуральные числа: ";
     for (int i = 0; i < numCount; i++) {
-        std::cin >> numbers[i];
+        cin >> numbers[i];
     }
 
-    std::cout << "Possible combinations:" << std::endl;
-    findAllCombinations(numbers, target);
+    cout << "Возможные комбинации:" << endl;
+
+    vector<int> currentCombination;
+    findNumberCombinations(numbers, target, currentCombination, 0);
 
     return 0;
 }

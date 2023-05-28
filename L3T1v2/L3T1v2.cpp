@@ -68,33 +68,6 @@ public:
     }
 };
 
-    void displayElement(int value)
-    {
-        Node* current = head;
-        while (current != nullptr)
-        {
-            if (current->data == value)
-            {
-                std::cout << "Element " << value << " found at address: " << current << std::endl;
-                return;
-            }
-            current = current->next;
-        }
-        std::cout << "Element " << value << " not found in the list." << std::endl;
-    }
-
-    ~LinkedList()
-    {
-        Node* current = head;
-        while (current != nullptr)
-        {
-            Node* temp = current;
-            current = current->next;
-            delete temp;
-        }
-    }
-};
-
 int main()
 {
     LinkedList linkedList;

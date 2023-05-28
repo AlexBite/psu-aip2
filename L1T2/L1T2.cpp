@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Function to check if a number is prime
+// Проверка на простое число
 bool isPrime(int num) {
     if (num < 2)
         return false;
@@ -17,17 +17,17 @@ bool isPrime(int num) {
     return true;
 }
 
-// Function to write the contents of a binary file to a text file
+// Запись содержимого бинарного файла в текстовый файл
 void writeBinaryFileToTextFile(const string& binaryFileName, const string& textFileName) {
     ifstream binaryFile(binaryFileName, ios::binary);
     if (!binaryFile) {
-        cerr << "Failed to open the binary file: " << binaryFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << binaryFileName << endl;
         return;
     }
 
     ofstream textFile(textFileName);
     if (!textFile) {
-        cerr << "Failed to open the text file: " << textFileName << endl;
+        cerr << "Не удалось открыть текстовый файл: " << textFileName << endl;
         binaryFile.close();
         return;
     }
@@ -49,11 +49,10 @@ int main()
     const string binaryFileName = "numbers.bin";
     const string primeFileName = "prime.bin";
     const string compositeFileName = "composite.bin";
-
-    // Write random integers to the text file
+    
     ofstream textFile(textFileName);
     if (!textFile) {
-        cerr << "Failed to create the text file: " << textFileName << endl;
+        cerr << "Не удалось открыть текстовый файл: " << textFileName << endl;
         return 1;
     }
 
@@ -70,16 +69,16 @@ int main()
 
     textFile.close();
 
-    // Convert text file to binary file
+    // Конвертация текстового файла в бинарный файл
     ifstream inputFile(textFileName);
     if (!inputFile) {
-        cerr << "Failed to open the text file: " << textFileName << endl;
+        cerr << "Не удалось открыть текстовый файл: " << textFileName << endl;
         return 1;
     }
 
     ofstream binaryFile(binaryFileName, ios::binary);
     if (!binaryFile) {
-        cerr << "Failed to create the binary file: " << binaryFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << binaryFileName << endl;
         inputFile.close();
         return 1;
     }
@@ -92,14 +91,14 @@ int main()
     inputFile.close();
     binaryFile.close();
 
-    // Read and update the binary file
+    // Прочитать и обновить бинарный файл
     cout << "Введите номер записи для редактирования (0 - " << numIntegers - 1 << "): ";
     int recordNumber;
     cin >> recordNumber;
 
     fstream binaryFileToUpdate(binaryFileName, ios::binary | ios::in | ios::out);
     if (!binaryFileToUpdate) {
-        cerr << "Failed to open the binary file: " << binaryFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << binaryFileName << endl;
         return 1;
     }
 
@@ -110,23 +109,23 @@ int main()
     binaryFileToUpdate.write(reinterpret_cast<const char*>(&newValue), sizeof(int));
     binaryFileToUpdate.close();
 
-    // Create two new binary files for prime and composite numbers
+    // Создать два новых бинарных файла для простых и составных чисел
     ifstream binaryFileToRead(binaryFileName, ios::binary);
     if (!binaryFileToRead) {
-        cerr << "Failed to open the binary file: " << binaryFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << binaryFileName << endl;
         return 1;
     }
 
     ofstream primeFile(primeFileName, ios::binary);
     if (!primeFile) {
-        cerr << "Failed to create the binary file: " << primeFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << primeFileName << endl;
         binaryFileToRead.close();
         return 1;
     }
 
     ofstream compositeFile(compositeFileName, ios::binary);
     if (!compositeFile) {
-        cerr << "Failed to create the binary file: " << compositeFileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << compositeFileName << endl;
         binaryFileToRead.close();
         return 1;
     }
@@ -142,11 +141,11 @@ int main()
     primeFile.close();
     compositeFile.close();
 
-    // Function to output the contents of a binary file to a text file or screen
+    // Вывод содержимого бинарного файла на экран
     auto outputBinaryFileContents = [](const string& fileName, ostream& output) {
         ifstream binaryFile(fileName, ios::binary);
         if (!binaryFile) {
-            cerr << "Failed to open the binary file: " << fileName << endl;
+            cerr << "Не удалось открыть бинарный файл: " << fileName << endl;
             return;
         }
 
@@ -158,11 +157,11 @@ int main()
         binaryFile.close();
     };
 
-    // Output binary file contents to text file
+    // Запись содежимого из бинарных файлов в текстовые файлы
     writeBinaryFileToTextFile(primeFileName, "prime_numbers.txt");
     writeBinaryFileToTextFile(compositeFileName, "composite_numbers.txt");
 
-    // Output binary file contents to screen
+    // Вывод содержимого бинарного файла на экран
     cout << "Простые числа:" << endl;
     outputBinaryFileContents(primeFileName, cout);
     cout << endl;

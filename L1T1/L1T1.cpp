@@ -97,7 +97,7 @@ int main()
     students[3].faculty = "Строительный";
     students[3].group= "А";
     students[3].subjects[0] = { "Черчение", 50 };
-    students[3].subjects[1] = { "Филосовия", 20 };
+    students[3].subjects[1] = { "Философия", 20 };
     students[3].subjects[2] = { "Английский", 25 };
     students[3].subjects[3] = { "Математика", 50 };
     students[3].subjects[4] = { "Физика", 23 };

@@ -17,7 +17,7 @@ void writeStudentsToFile(const string& fileName, const Student* students, int nu
     ofstream outputFile(fileName, ios::binary);
     if (!outputFile)
     {
-        cerr << "Failed to open the binary file: " << fileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << fileName << endl;
         return;
     }
 
@@ -34,7 +34,7 @@ void displayStudentsBySpecialty(const string& fileName, const string& specialty)
     fstream inputFile(fileName, ios::binary | ios::in | ios::out);
     if (!inputFile)
     {
-        cerr << "Failed to open the binary file: " << fileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << fileName << endl;
         return;
     }
 
@@ -43,10 +43,10 @@ void displayStudentsBySpecialty(const string& fileName, const string& specialty)
     {
         if (student.specialty == specialty)
         {
-            cout << "Name: " << student.name << endl;
-            cout << "Group: " << student.group << endl;
-            cout << "Specialty: " << student.specialty << endl;
-            cout << "Scholarship: " << student.scholarship << endl;
+            cout << "ФИО: " << student.name << endl;
+            cout << "Группа: " << student.group << endl;
+            cout << "Специальность: " << student.specialty << endl;
+            cout << "Стипендия: " << student.scholarship << endl;
             cout << endl;
         }
     }
@@ -59,7 +59,7 @@ void replaceStudentScholarship(const string& fileName, int index, int newScholar
     fstream file(fileName, ios::in | ios::out | ios::binary);
     if (!file)
     {
-        cerr << "Failed to open the binary file: " << fileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << fileName << endl;
         return;
     }
 
@@ -75,22 +75,23 @@ void replaceStudentScholarship(const string& fileName, int index, int newScholar
     file.close();
 }
 
+// Вывод содержимого баинарного файла на экран
 void displayBinaryFileContents(const string& fileName)
 {
     ifstream inputFile(fileName, ios::binary);
     if (!inputFile)
     {
-        cerr << "Failed to open the binary file: " << fileName << endl;
+        cerr << "Не удалось открыть бинарный файл: " << fileName << endl;
         return;
     }
 
     Student student;
     while (inputFile.read(reinterpret_cast<char*>(&student), sizeof(Student)))
     {
-        cout << "Name: " << student.name << endl;
-        cout << "Group: " << student.group << endl;
-        cout << "Specialty: " << student.specialty << endl;
-        cout << "Scholarship: " << student.scholarship << endl;
+        cout << "ФИО: " << student.name << endl;
+        cout << "Группа: " << student.group << endl;
+        cout << "Специальность: " << student.specialty << endl;
+        cout << "Стипендия: " << student.scholarship << endl;
         cout << endl;
     }
 
@@ -103,23 +104,23 @@ int main()
     const int numStudents = 3;
     Student students[numStudents] = {
         {"Джон Смит", "Группа А", "физика", 1500},
-        {"Эмили Джонсон", "Группа Б", "химия", 1700},
-        {"Элис Джонсон", "Группа С", "физика", 1600}
+        {"Эмили Джонсон", "Группа Б", "физика", 1700},
+        {"Элис Джонсон", "Группа С", "химия", 1600}
     };
 
-    // Write the students to a binary file
+    // Записать студентов в бинарный файл
     writeStudentsToFile("students.bin", students, numStudents);
 
-    // Display the list of students of the specialty "physics" from the binary file
+    // Вывод списка студентов со специальностью "физика" из бинрного файла
     cout << "Список физиков: " << endl;
     displayStudentsBySpecialty("students.bin", "физика");
-
-    // Replace the scholarship for a specific student in the binary file
-    int studentIndex = 1; // Index of the student to modify
-    int newScholarship = 2000; // New scholarship value
+    
+    // Заменить стипендию для первого студента на 2000
+    int studentIndex = 1;
+    int newScholarship = 2000;
     replaceStudentScholarship("students.bin", studentIndex, newScholarship);
 
-    // Display the modified list of students from the binary file
+    // Вывести обновлённый список студентов из бинарного файла
     cout << "Файл после изменения: " << endl;
     displayBinaryFileContents("students.bin");
 

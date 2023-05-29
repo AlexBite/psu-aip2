@@ -1,118 +1,150 @@
 #include <iostream>
 #include <fstream>
 
-struct Node {
+using namespace std;
+
+struct Node
+{
     int key;
     Node* left;
     Node* right;
 
-    Node(int value) : key(value), left(nullptr), right(nullptr) {}
+    Node(int value) : key(value), left(nullptr), right(nullptr)
+    {
+    }
 };
 
-class BinarySearchTree {
+class BinarySearchTree
+{
 private:
     Node* root;
 
 public:
-    BinarySearchTree() : root(nullptr) {}
-
-    void insert(int value) {
-        root = insertNode(root, value);
+    BinarySearchTree() : root(nullptr)
+    {
     }
 
-    Node* insertNode(Node* node, int value) {
-        if (node == nullptr) {
+    void add(int value)
+    {
+        root = addNode(root, value);
+    }
+
+    Node* addNode(Node* node, int value)
+    {
+        if (node == nullptr)
+        {
             node = new Node(value);
-        } else if (value < node->key) {
-            node->left = insertNode(node->left, value);
-        } else if (value > node->key) {
-            node->right = insertNode(node->right, value);
+        }
+        else if (value < node->key)
+        {
+            node->left = addNode(node->left, value);
+        }
+        else if (value > node->key)
+        {
+            node->right = addNode(node->right, value);
         }
         return node;
     }
 
-    void displaySideways() {
+    // Вывод боком
+    void printSideways()
+    {
         sideways(root, 0);
     }
 
-    void displayParentheses() {
+    // Вывод со скобками
+    void printParentheses()
+    {
         displayParenthesesHelper(root);
-        std::cout << std::endl;
+        cout << endl;
     }
 
-    Node* search(int value) {
+    Node* search(int value)
+    {
         return searchNode(root, value);
     }
 
-    Node* searchNode(Node* node, int value) {
-        if (node == nullptr || node->key == value) {
+    Node* searchNode(Node* node, int value)
+    {
+        if (node == nullptr || node->key == value)
             return node;
-        } else if (value < node->key) {
+
+        if (value < node->key)
             return searchNode(node->left, value);
-        } else {
-            return searchNode(node->right, value);
-        }
+
+        return searchNode(node->right, value);
     }
 
 private:
-    void sideways(Node* node, int level) {
-        if (node != nullptr) {
-            sideways(node->right, level + 1);
+    // Вывод боком (обратный обход)
+    void sideways(Node* node, int level)
+    {
+        if (node == nullptr)
+            return;
 
-            for (int i = 0; i < level; i++) {
-                std::cout << "    ";
-            }
-            std::cout << node->key << std::endl;
+        sideways(node->right, level + 1);
 
-            sideways(node->left, level + 1);
+        for (int i = 0; i < level; i++)
+        {
+            cout << "    ";
         }
+        cout << node->key << endl;
+
+        sideways(node->left, level + 1);
     }
 
-    void displayParenthesesHelper(Node* node) {
-        if (node != nullptr) {
-            std::cout << "(";
-            std::cout << node->key;
-            if (node->left != nullptr || node->right != nullptr) {
-                displayParenthesesHelper(node->left);
-                std::cout << " ";
-                displayParenthesesHelper(node->right);
-            }
-            std::cout << ")";
+    void displayParenthesesHelper(Node* node)
+    {
+        if (node == nullptr)
+            return;
+
+        cout << "(";
+        cout << node->key;
+        if (node->left != nullptr || node->right != nullptr)
+        {
+            displayParenthesesHelper(node->left);
+            cout << " ";
+            displayParenthesesHelper(node->right);
         }
+        cout << ")";
     }
 };
 
-int main() {
+int main()
+{
     BinarySearchTree bst;
-    std::ifstream inputFile("numbers.txt");
+    ifstream inputFile("numbers.txt");
 
-    if (!inputFile.is_open()) {
-        std::cout << "Failed to open file." << std::endl;
+    if (!inputFile.is_open())
+    {
+        cout << "Не удалось открыть файл." << endl;
         return 0;
     }
 
     int value;
-    while (inputFile >> value) {
-        bst.insert(value);
-    }
+    while (inputFile >> value)
+        bst.add(value);
 
     inputFile.close();
 
-    std::cout << "Binary Search Tree (Sideways):" << std::endl;
-    bst.displaySideways();
+    cout << "Ввывод боком: " << endl;
+    bst.printSideways();
 
-    std::cout << "Binary Search Tree (Parentheses): ";
-    bst.displayParentheses();
+    cout << "Вывод со скобками: ";
+    bst.printParentheses();
 
     int searchValue;
-    std::cout << "Enter the value to search for: ";
-    std::cin >> searchValue;
+    cout << "Введит значение для поиска: ";
+    cin >> searchValue;
 
     Node* result = bst.search(searchValue);
-    if (result != nullptr) {
-        std::cout << "Node address of key " << searchValue << ": " << result << std::endl;
-    } else {
-        std::cout << "Key " << searchValue << " not found in the tree." << std::endl;
+    if (result != nullptr)
+    {
+        cout << "Адрес узла со значнием " << searchValue << ": " << result << endl;
+    }
+    else
+    {
+        cout << "Значение " << searchValue << " не найдено." << endl;
     }
 
     return 0;

@@ -157,6 +157,9 @@
     <ClCompile Include="L4T1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="numbers.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="task.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

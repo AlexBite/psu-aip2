@@ -64,16 +64,15 @@ public:
     void displayElement(int value)
     {
         Node* current = head;
-        int index = 0;
+        
         while (current != nullptr)
         {
             if (current->data == value)
             {
-                cout << "Элемент со значнием " << value << " найден по индексу: " << index + 1 << endl;
+                cout << "Элемент со значнием " << value << " найден по адресу: " << current << endl;
                 return;
             }
             current = current->next;
-            index++;
         }
         cout << "Элемент со значнием " << value << " не найден." << endl;
     }

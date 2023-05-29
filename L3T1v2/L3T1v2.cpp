@@ -92,7 +92,9 @@ public:
         Node* newNode = new Node(value);
         newNode->prev = current;
         newNode->next = current->next;
-        current->next->prev = newNode;
+        if (current->next != nullptr)
+            current->next->prev = newNode;
+
         current->next = newNode;
 
         dataStack.push(value);

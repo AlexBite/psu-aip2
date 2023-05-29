@@ -1,129 +1,314 @@
 #include <iostream>
-#include <fstream>
 #include <stack>
 
-struct Node {
-    int data;
+using namespace std;
+
+struct Node
+{
+    double data;
+    Node* prev;
     Node* next;
+
+    Node(double value) : data(value), prev(nullptr), next(nullptr)
+    {
+    }
 };
 
-class LinkedList {
+class LinkedList
+{
 private:
-    std::stack<Node*> stack;
+    Node* head;
+    Node* tail;
+    stack<double> dataStack;
 
 public:
-    void insert(int value) {
-        Node* newNode = new Node;
-        newNode->data = value;
-        newNode->next = nullptr;
-
-        if (stack.empty()) {
-            stack.push(newNode);
-        } else {
-            Node* top = stack.top();
-            newNode->next = top;
-            stack.push(newNode);
-        }
-
-        std::cout << "Element " << value << " added to the list." << std::endl;
+    LinkedList() : head(nullptr), tail(nullptr)
+    {
     }
 
-    void displayElement(int value)
+    void insertAtBeginning(double value)
     {
-        Node* current = stack.top();
+        Node* newNode = new Node(value);
+
+        if (head == nullptr)
+        {
+            head = newNode;
+            tail = newNode;
+        }
+        else
+        {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+
+        dataStack.push(value);
+    }
+
+    void insertAtEnd(double value)
+    {
+        Node* newNode = new Node(value);
+
+        if (tail == nullptr)
+        {
+            head = newNode;
+            tail = newNode;
+        }
+        else
+        {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+
+        dataStack.push(value);
+    }
+
+    void insertAtMiddle(double value)
+    {
+        if (head == nullptr)
+        {
+            insertAtBeginning(value);
+            return;
+        }
+
+        Node* current = head;
+        int count = 0;
+
+        while (current != nullptr)
+        {
+            count++;
+            current = current->next;
+        }
+
+        int middleIndex = count / 2;
+
+        current = head;
+        for (int i = 1; i < middleIndex; i++)
+        {
+            current = current->next;
+        }
+
+        Node* newNode = new Node(value);
+        newNode->prev = current;
+        newNode->next = current->next;
+        current->next->prev = newNode;
+        current->next = newNode;
+
+        dataStack.push(value);
+    }
+
+    void removeNumber(double value)
+    {
+        Node* current = head;
+
         while (current != nullptr)
         {
             if (current->data == value)
             {
-                std::cout << "Element " << value << " found at address: " << current << std::endl;
-                return;
+                if (current == head)
+                {
+                    head = current->next;
+                    if (head != nullptr)
+                    {
+                        head->prev = nullptr;
+                    }
+                }
+                else if (current == tail)
+                {
+                    tail = current->prev;
+                    if (tail != nullptr)
+                    {
+                        tail->next = nullptr;
+                    }
+                }
+                else
+                {
+                    current->prev->next = current->next;
+                    current->next->prev = current->prev;
+                }
+
+                delete current;
+                break;
             }
+
             current = current->next;
         }
-        std::cout << "Element " << value << " not found in the list." << std::endl;
+
+        // Удаление значения из стека
+        stack<double> tempStack;
+        while (!dataStack.empty())
+        {
+            double top = dataStack.top();
+            dataStack.pop();
+            if (top != value)
+            {
+                tempStack.push(top);
+            }
+        }
+        while (!tempStack.empty())
+        {
+            dataStack.push(tempStack.top());
+            tempStack.pop();
+        }
     }
 
-    void display() {
-        if (stack.empty()) {
-            std::cout << "The list is empty." << std::endl;
+    void swapNumbers(double value1, double value2)
+    {
+        Node* node1 = nullptr;
+        Node* node2 = nullptr;
+        Node* current = head;
+
+        while (current != nullptr)
+        {
+            if (current->data == value1)
+            {
+                node1 = current;
+            }
+            else if (current->data == value2)
+            {
+                node2 = current;
+            }
+
+            current = current->next;
+        }
+
+        if (node1 == nullptr || node2 == nullptr)
+        {
+            cout << "Одно или несколько значений не найдены в списке." << endl;
             return;
         }
 
-        std::cout << "Elements in the list: ";
-        std::stack<Node*> tempStack = stack;
-        while (!tempStack.empty()) {
-            Node* node = tempStack.top();
-            std::cout << node->data << " ";
-            tempStack.pop();
-        }
-        std::cout << std::endl;
+        double tempData = node1->data;
+        node1->data = node2->data;
+        node2->data = tempData;
     }
 
-    ~LinkedList() {
-        while (!stack.empty()) {
-            Node* top = stack.top();
-            stack.pop();
-            delete top;
+    void displayNumbers()
+    {
+        Node* current = head;
+        if (current == nullptr)
+        {
+            cout << "Список пуст.";
+            return;
+        }
+
+        while (current != nullptr)
+        {
+            cout << current->data << " ";
+            current = current->next;
+        }
+
+        cout << endl;
+    }
+
+    void displaySum()
+    {
+        double sum = 0;
+
+        while (!dataStack.empty())
+        {
+            sum += dataStack.top();
+            dataStack.pop();
+        }
+
+        cout << "Сумма всех элементов: " << sum << endl;
+    }
+
+    ~LinkedList()
+    {
+        Node* current = head;
+        while (current != nullptr)
+        {
+            Node* temp = current;
+            current = current->next;
+            delete temp;
         }
     }
 };
 
 int main()
 {
-    LinkedList linkedList;
-    int choice;
-
-    while (true)
+    system("chcp 65001");
+    LinkedList list;
+    bool isExit = false;
+    while (!isExit)
     {
-        std::cout << "Select a menu item:" << std::endl;
-        std::cout << "1. Forming a list (reading from a file)" << std::endl;
-        std::cout << "2. Adding a list item from the keyboard" << std::endl;
-        std::cout << "3. Displaying all elements of the list" << std::endl;
-        std::cout << "4. Display the element with the given value" << std::endl;
-        std::cout << "5. Exit" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        int choice = -1;
+        cout << endl;
+        cout << "Выберите пункт меню" << endl;
+        cout << "1. Вывести содержимое списка" << endl;
+        cout << "2. Вставить в начало" << endl;
+        cout << "3. Вставить в середину" << endl;
+        cout << "4. Вставить в конец" << endl;
+        cout << "5. Удаление числа из списка" << endl;
+        cout << "6. Перестановка двух чисел местами" << endl;
+        cout << "7. Сумма всех элементов списка" << endl;
+        cout << "0. Выход" << endl;
+        cout << "Выбрать: ";
+        cin >> choice;
 
-        if (choice == 1)
+        switch (choice)
         {
-            std::string filename;
-            int numNumbers;
+        case 1:
+            {
+                cout << "Содержимое: ";
+                list.displayNumbers();
+                break;
+            }
+        case 2:
+            {
+                double value;
+                cout << "Введите число: ";
+                cin >> value;
+                list.insertAtBeginning(value);
+                break;
+            }
+        case 3:
+            {
+                double value;
+                cout << "Введите число: ";
+                cin >> value;
+                list.insertAtMiddle(value);
+                break;
+            }
+        case 4:
+            {
+                double value;
+                cout << "Введите число: ";
+                cin >> value;
+                list.insertAtEnd(value);
+                break;
+            }
+        case 5:
+            {
+                double value;
+                cout << "Введите число: ";
+                cin >> value;
+                list.removeNumber(value);
+                break;
+            }
+        case 6:
+            double value1;
+            cout << "Введите значние первого числа: ";
+            cin >> value1;
 
-            std::cout << "Enter the name of the file: ";
-            std::cin >> filename;
-            std::cout << "Enter the number of numbers: ";
-            std::cin >> numNumbers;
+            double value2;
+            cout << "Введите значение второго числа: ";
+            cin >> value2;
 
-            linkedList.insertFromFile(filename);
-        }
-        else if (choice == 2)
-        {
-            int value;
-
-            std::cout << "Enter the value to be added: ";
-            std::cin >> value;
-
-            linkedList.insert(value);
-        }
-        else if (choice == 3)
-        {
-            linkedList.display();
-        }
-        else if (choice == 4)
-        {
-            int value;
-            std::cout << "Enter the value to search for: ";
-            std::cin >> value;
-
-            linkedList.displayElement(value);
-        }
-        else if (choice == 5)
-        {
+            list.swapNumbers(value1, value2);
             break;
-        }
-        else
-        {
-            std::cout << "Invalid choice. Please try again." << std::endl;
+        case 7:
+            list.displaySum();
+            break;
+        case 0:
+            isExit = true;
+            cout << "Работа завершена.";
+            break;
+        default:
+            cout << "Введите номер пункта меню." << endl;
+            break;
         }
     }
 

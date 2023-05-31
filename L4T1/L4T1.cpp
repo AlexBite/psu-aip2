@@ -112,6 +112,7 @@ private:
 
 int main()
 {
+    system("chcp 65001");
     BinarySearchTree bst;
     ifstream inputFile("numbers.txt");
 

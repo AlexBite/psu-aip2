@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 
+using namespace std;
+
 struct Node
 {
     int key;
@@ -13,13 +15,13 @@ struct Node
     }
 };
 
-class MinimumHeightTree
+class BalancedTree
 {
 private:
     Node* root;
 
 public:
-    MinimumHeightTree() : root(nullptr)
+    BalancedTree() : root(nullptr)
     {
     }
 
@@ -48,19 +50,19 @@ public:
     void displayForwardTraversal()
     {
         forwardTraversal(root);
-        std::cout << std::endl;
+        cout << endl;
     }
 
     void displayBackwardTraversal()
     {
         backwardTraversal(root);
-        std::cout << std::endl;
+        cout << endl;
     }
 
     void displayEndTraversal()
     {
         endTraversal(root);
-        std::cout << std::endl;
+        cout << endl;
     }
 
     void remove(int value)
@@ -73,7 +75,7 @@ private:
     {
         if (node != nullptr)
         {
-            std::cout << node->key << " ";
+            cout << node->key << " ";
             forwardTraversal(node->left);
             forwardTraversal(node->right);
         }
@@ -85,7 +87,7 @@ private:
         {
             backwardTraversal(node->left);
             backwardTraversal(node->right);
-            std::cout << node->key << " ";
+            cout << node->key << " ";
         }
     }
 
@@ -94,7 +96,7 @@ private:
         if (node != nullptr)
         {
             endTraversal(node->left);
-            std::cout << node->key << " ";
+            cout << node->key << " ";
             endTraversal(node->right);
         }
     }
@@ -102,9 +104,7 @@ private:
     Node* removeNode(Node* node, int value)
     {
         if (node == nullptr)
-        {
             return nullptr;
-        }
 
         if (value < node->key)
         {
@@ -156,39 +156,43 @@ private:
 
 int main()
 {
-    MinimumHeightTree mht;
-    std::ifstream inputFile("numbers.txt");
+    system("chcp 65001");
+    BalancedTree mht;
+    ifstream inputFile("numbers.txt");
 
     if (!inputFile.is_open())
     {
-        std::cout << "Failed to open file." << std::endl;
+        cout << "Не удалось открыть файл." << endl;
         return 0;
     }
 
+    cout << "Исходная последовательность: ";
     int value;
     while (inputFile >> value)
     {
+        cout << value << " ";
         mht.insert(value);
     }
+    cout << endl;
 
     inputFile.close();
 
-    std::cout << "Forward Traversal: ";
+    cout << "Прямой обход: ";
     mht.displayForwardTraversal();
-    std::cout << "Backward Traversal: ";
+    cout << "Обратный обход: ";
     mht.displayBackwardTraversal();
 
-    std::cout << "End Traversal: ";
+    cout << "Концевой обход: ";
     mht.displayEndTraversal();
 
     int removeValue;
-    std::cout << "Enter the value to remove from the tree: ";
-    std::cin >> removeValue;
+    cout << "Введите значение для удаления из дерева: ";
+    cin >> removeValue;
 
     mht.remove(removeValue);
-    std::cout << "Value " << removeValue << " has been removed from the tree." << std::endl;
+    cout << "Узел со значением " << removeValue << " удалеён." << endl;
 
-    std::cout << "Forward Traversal after removal: ";
+    cout << "Прямой обход после удаления: ";
     mht.displayForwardTraversal();
 
     return 0;

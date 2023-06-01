@@ -38,7 +38,7 @@ Vertex* breadthFirstSearch(Vertex* start, int target, int numVertices) {
 }
 
 int main() {
-    system("chcp 65001");  // Set console code page to UTF-8
+    system("chcp 65001");
 
     ifstream inputFile("graph.txt");
     if (!inputFile.is_open()) {

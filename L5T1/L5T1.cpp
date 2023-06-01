@@ -141,10 +141,7 @@ vector<int> getShortestPath(const vector<int>& previous, int endVertex)
 int main()
 {
     system("chcp 65001");
-    string filename;
-    cout << "Введите название файла: ";
-    cin >> filename;
-
+    string filename = "graph.txt";
     int numVertices;
     vector<vector<Edge>> graph = readGraphFromFile(filename, numVertices);
 
